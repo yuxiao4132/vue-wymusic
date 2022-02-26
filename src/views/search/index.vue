@@ -6,15 +6,15 @@
            </div>
            <div slot="center">
                <van-search
-    @click="searchclick()"
-    v-model="value"
-    show-action
-    placeholder="请输入搜索关键词"
-    @search="onSearch"
-    @cancel="onCancel"
-    @input="onInput"
-    action-text='取消'
-   />
+                  @click="searchclick()"
+                  v-model="value"
+                  show-action
+                  placeholder="请输入搜索关键词"
+                  @search="onSearch"
+                  @cancel="onCancel"
+                  @input="onInput"
+                  action-text='取消'
+               />
            </div>
            <div slot="right"></div>
        </TobTab>

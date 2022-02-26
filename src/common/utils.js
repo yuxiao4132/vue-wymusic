@@ -1,4 +1,4 @@
-import {getuserdata} from '@/api/login'
+import {user} from '@/api/login'
 import store from '@/store/index.js'
 export function debounce(func,delay){
         let timer=null
@@ -52,11 +52,16 @@ export const getItem=name=>{
 // },
 
 
-export async function userdata(userid){
-  const {profile}=await getuserdata({uid:userid})
-  const userinfo={
-  userimg:profile.avatarUrl,
-  username:profile.nickname
+export async function userdata(){
+  const {profile}=await user({
+    uid:localStorage.getItem('userid')
+  })
+  //console.log(profile);
+  if(profile){
+    const userinfo={
+      userimg:profile.avatarUrl,
+      username:profile.nickname
+      }
+      store.state.userinfo=userinfo
   }
-  store.state.userinfo=userinfo
 }

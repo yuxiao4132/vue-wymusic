@@ -39,14 +39,17 @@
          click:true,
         //  preventDefaultException:{tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|DIV)$/},
          pullUpLoad:this.pullUpLoad,
-		     eventPassthrough:this.horizontal,
+		    //  eventPassthrough:'horizontal',
          pullDownRefresh:this.pullDownRefresh,
+         freeScroll:true
         //  touchmove:false
 	    	//  disableTouch:true
       })
       if(this.probeType===2 || this.probeType===3)
       this.scroll.on('scroll',position=>{
-        this.$emit('scroll',position)
+        
+        const content = this.$refs.wrapper.getElementsByClassName('content')[0]
+        // content.style.transform=`translateY(400px)`
       })
 
       if(this.pullUpLoad){

@@ -65,13 +65,12 @@
       searchpush(index){
        this.$store.state.ishome=false
        console.log(index)
-       this.$store.state.currentindex=index+1
+      //  this.$store.state.currentindex=index+1
 			 this.$store.state.songlist=this.resultlist
        this.$store.state.songid=this.resultlist[index].id
-       if(window.localStorage.getItem('songid')!==this.resultlist[index].id){
-				this.$store.state.isbofang=true
-			}
-       this.$router.push('/song/'+this.resultlist[index].id)
+			 this.$store.state.isbofang=true
+       this.$store.state.issheet=false
+       this.$router.push('/song')
        
       //  this.$router.push('/song/'+this.resultlist[index].id)
       },

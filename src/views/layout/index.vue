@@ -3,7 +3,7 @@
 	   <keep-alive>	
 		 <router-view></router-view>
 	   </keep-alive>
-	   <audioinfo v-show="songinfo"></audioinfo>
+	   <audioinfo v-show="songinfo" ></audioinfo>
 	   <BottomTabbar></BottomTabbar>
     </div>
 </template>
@@ -11,7 +11,7 @@
 <script>
   //引入bottom组件并配置再相应的组件中
   import {getsong} from '@/api/sheet'
-  import {getmusicurl} from '@/api/song'
+  import {getmusicurl,getlyric} from '@/api/song'
   import {songping} from '@/api/comment'
   import audioinfo from '@/components/audioinfo'
   import BottomTabbar from '@/components/Tabbar.vue'
@@ -29,26 +29,31 @@
 	},
 	watch:{
        'getsongid':{
-		   handler:function(){
+		   handler:function(val){
 			//    console.log('???')
-			  this.getsongs()
 			  this.geturl()
+			  this.getsongs()
+			  this.musiclyric()
 		   }
 	   }
 	},
 	computed:{
          ...mapGetters([
              'songinfo',
-			 'getsongid'
+			 'getsongid',
+			 'musicurl'
         ]),
     },
 	methods:{
 		async geturl(){
-			const data= await getmusicurl({id:this.getsongid})
-			this.musicurl=data.data[0].url
-			this.$store.state.musicurl=data.data[0].url
-			// console.log(this.$store.state.musicurl)
-			// console.log(typeof this.musicurl)
+			const data = await getmusicurl({id:this.getsongid})
+            this.$store.state.musicurl=data.data[0].url
+			console.log(data)
+		},
+		async musiclyric(){
+            const data = await getlyric({id:this.getsongid})
+			this.$store.state.lyric=data.lrc.lyric
+			// console.log(this.$store.state.lyric)
 		},
 		async getsongs(){
 			this.getsongping()

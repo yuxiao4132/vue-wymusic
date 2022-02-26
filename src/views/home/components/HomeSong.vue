@@ -41,7 +41,7 @@
 		},
 		//点击实现路由跳转
 		itemClick(index){
-			window.localStorage.setItem('sheetid',this.recommendlist[index].id)
+			//this.$store.state.sheetid=this.recommendlist[index].id
 			this.$router.push('/sheet/'+this.recommendlist[index].id)
 		}
 	}

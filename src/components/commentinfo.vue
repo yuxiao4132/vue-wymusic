@@ -1,11 +1,11 @@
 <template>
 	<div class="commentinfo">
       <div class="img">
-        <img :src="commentinfo.imgurl"/>
+        <img :src="commentinfo.img"/>
       </div>
       <div class="info">
-        <p class="name">{{commentinfo.name}}</p>
-        <p class="uname"><span class="by">by</span>&nbsp;{{commentinfo.uname}}</p>
+        <p class="name">{{commentinfo.title}}</p>
+        <p class="uname"><span class="by">by</span>&nbsp;{{commentinfo.name}}</p>
       </div>
       <div class="right">
          <span>></span>
@@ -22,9 +22,6 @@
             require:true
         }
     },
-    methods:{
-       
-    }
   }
 </script>
 

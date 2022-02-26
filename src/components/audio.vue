@@ -10,7 +10,7 @@
 	  :src="musrcurl"></audio>	
       <div class="songtime">
       	<span class="kaishi">{{showmiao}}</span>
-      		<div class="songlength" ref="product">
+      		<div class="songlength" ref="product" @click="audioclick">
       		  <div ref="dongtai" class="songgettime">
       				<div></div>
       		  </div>
@@ -23,37 +23,34 @@
 
 <script>
   import {getmusicurl} from '@/api/song'
-  import {mapGetters,mapMutations} from 'vuex'
+  import {mapGetters,mapMutations, mapState} from 'vuex'
   export default {
     name: 'AudioIndex',
 	data(){
 		return {
 			songlength:null,
-			duration:null,
-			time:null,
 			newvalue:null,
 			oldvalue:null,
 			miao:0,
 			cleartime:null,
-			width:null
+			musicclick:false
 		}
 	},
 	 computed:{
-		...mapGetters([
-            'gettime',
-			'getduration',
-			'getwidth',
-			'getsongid',
+		...mapState([
+			'time',
+			'duration',
+			'width',
 			'songlist',
 			'currentindex'
-        ]),
+		]),
       showduration(){
 		//   if(parseInt(this.duration/60)<10){
 		// 	  return this.duration
 		//   }
 		//   console.log(this.duration/60)
-		  let fen=parseInt((this.getduration/60)) < 10 ? '0'+parseInt((this.getduration/60))+':' :  parseInt((this.getduration/60))+':'
-		  let ismiao=this.getduration-parseInt((this.getduration/60))*60
+		  let fen=parseInt((this.duration/60)) < 10 ? '0'+parseInt((this.duration/60))+':' :  parseInt((this.duration/60))+':'
+		  let ismiao=this.duration-parseInt((this.duration/60))*60
           let miao=Number(ismiao)<10 ? '0'+parseInt(ismiao) : parseInt(ismiao)
 		  return fen + miao
 		  //console.log((this.duration-((this.duration/60).toFixed(0)*60)).toFixed(0))
@@ -78,10 +75,17 @@
 		}
 	},
 	watch:{
-		 gettime(val, oldVal){//普通的watch监听
+		//音乐时间this.getwidth/this.getduration 点击位置的宽
+		//滚动条的宽
+		 time(val, oldVal){//普通的watch监听
             this.miao=val
-			let product=this.getwidth/this.getduration
+			let product=this.width/this.duration
+			// console.log(this.getduration)
 			// console.log(product)
+
+			// console.log(this.product)
+			//val*product=width
+			// console.log
 			this.$refs.dongtai.style.width=(val*product)+'px' 
 		 }
 	},
@@ -99,38 +103,37 @@
 			this.$store.state.duration=this.$refs.audios.duration
 		},
 		ended(){
+			// console.log('!!!')
           this.addmodify()
+		  //console.log(this.currentindex)
+		//   console.log(this.songlist[this.currentindex].id)
 		//   this.$store.state.currentindex
-		  this.$store.state.songid=this.songlist[this.currentindex-1].id
-		  this.$router.push({
-				params:{
-					id:this.songlist[this.currentindex-1].id
-				}
-			})
+		  this.$store.state.songid=this.songlist[this.currentindex].song ? this.songlist[this.currentindex].song.id : this.songlist[this.currentindex].id
 		},
 		durationchange(){
-		this.$bus.$on('isbofang',isbofang=>{
-			console.log(isbofang)
-		   if(isbofang){
-				this.startmusic()
-			}else{
-				this.stopmusic()
-			}
-	    })
-		// this.$bus.$on('songover',()=>{
-		// 	this.geturl()
-		// })
-			//  console.log(this.$refs.product.offsetWidth)
-			if(this.$refs.audios.currentTime){
-			  this.time=this.$refs.audios.currentTime
               this.$store.state.time=this.$refs.audios.currentTime
-			}
+			  this.$bus.$on('musrcclick',newwidth=>{
+				//求出每1秒移动多少px
+				let product=this.width/this.duration
+                // console.log(newwidth)
+				//求出当前播放了多少秒
+				this.$refs.audios.currentTime=newwidth/product;
+				//   this.$refs.dongtai.style.width=event.offsetX+'px'
+				//  console.log(event.offsetX)
+				//  console.log(this.$refs.dongtai.style.width)
+				//  console.log(event)
+			  })
 		},
 		stopmusic(){
 			this.$refs.audios.pause()
 		},
 		startmusic(){
 			this.$refs.audios.play()
+		},
+		audioclick(event){
+			this.$refs.dongtai.style.width=event.offsetX+'px'
+			const newwidth=event.offsetX
+			this.$bus.$emit('musrcclick',newwidth)
 		}
 	}
   }

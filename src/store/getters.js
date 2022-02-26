@@ -42,9 +42,16 @@ export default{
        return state.userinfo
     },
     getsongid(state){
+      //  console.log('???')
        return state.songid
     },
     getishome(state){
        return state.ishome
+    },
+    getlyric(state){
+       return state.lyric
+    },
+    getsheetid(state){
+       return state.sheetid
     }
 }

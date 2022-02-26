@@ -99,16 +99,6 @@
            this.removefirst()
            
         }
-
-        // if(this.$refs.first.style.color=='red'){
-        //   this.zan--
-        //   this.$refs.first.style.color='black'
-        //   this.$refs.firstcontent.style.color='black'
-        // }else{
-        //   this.zan++
-        //   this.$refs.first.style.color='red'
-        //   this.$refs.firstcontent.style.color='red'
-        // } 
       },
       async getpinglun(){
         const {data}=await pinglun({
@@ -133,7 +123,7 @@
 	 line-height: 60px;
 	 justify-content: space-between;
 	 background-color: #fff;
-	 // z-index: 9;
+	 z-index: 9;
 	 width: 100%;
 	 padding: 0 10px;
 	 position:fixed;

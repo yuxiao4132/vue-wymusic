@@ -3,7 +3,6 @@
     <ScrollY :class="songinfo ? 'contents' : 'content'" ref="scroll" 
 		:probe-type="3"
 		:pull-up-load="true"
-		horizontal="horizontal"
 		>
 		 <TobTab class="tobtab">
 			<div slot="left"><span class="iconfont icon-daohang"></span></div>
@@ -14,7 +13,7 @@
     
     <TobTab class="userdata" v-if="isLogin && getuserinfo">
 			<div slot="left" class="userleft">
-        <img :src="getuserinfo.userimg"/>
+        <img :src="getuserinfo.userimg" @load="imageLoad"/>
         <p>{{getuserinfo.username}}</p>
       </div>
 			<div slot="right" class="userright"><span class="iconfont icon-arrow-right"></span></div>
@@ -87,6 +86,11 @@
           </div>
         </div>
       </van-tab>
+      <van-cell
+      v-if="isLogin && getuserinfo"
+		  class="logout-cell"
+		  @click="onLogout"
+		  title="退出登录"/> 
     </van-tabs>
     </ScrollY>
   </div>
@@ -120,8 +124,22 @@
       
     },
     methods:{
-       
-      
+       onLogout(){
+         this.$dialog.confirm({
+			  title: '退出提示',
+			  message: '确认退出吗？',
+			}).then(() => {
+			   this.$store.state.isLogin=false
+         localStorage.removeItem('token');
+         localStorage.removeItem('userid');
+			  })
+			  .catch(() => {
+			    // on cancel
+			  });
+       },
+      imageLoad(){
+         this.$refs.scroll.refresh()
+      }
     },
     components:{
       TobTab,
@@ -133,6 +151,9 @@
 </script>
 
 <style scoped lang="less">
+  .logout-cell{
+    margin-bottom: 30px;
+  }
   .myindex{
     background-color: #eeeaeb;
     height: 100vh;
@@ -227,7 +248,7 @@
   }
   .sheetuser{
     padding: 10px;
-    margin: 30px 0;
+    margin:0 0 20px 0;
     background-color: #fff;
   }
   .sheetleft p{

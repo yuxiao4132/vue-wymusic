@@ -2,7 +2,9 @@ import axios from 'axios'
 
 export function request(config){
   const instance=axios.create({
-    baseURL:'http://localhost:3000',
+    // http://123.207.32.32:9001/
+    // baseURL:'https://wymusic4132.herokuapp.com/',
+    baseURL:' http://123.207.32.32:9001/',
     timeout:5000
   })
 

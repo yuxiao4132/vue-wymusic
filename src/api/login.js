@@ -1,4 +1,4 @@
-import {request} from '@/utils/request2'
+import {request} from '@/utils/request'
 
 // export const getvercode=params=>{
 // 	return request({
@@ -21,5 +21,21 @@ export const getuserdata=params=>{
 		method:'GET',
 		url:'/user/detail',
         params
+	})
+}
+
+export const user= params =>{
+	return request({
+		method:"GET",
+		url:"/user/detail",
+		params
+	})
+}
+
+export const getmysong= params =>{
+	return request({
+		method:"GET",
+		url:"/user/record",
+		params
 	})
 }

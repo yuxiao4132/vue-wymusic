@@ -24,7 +24,7 @@
       }
 	},
     mounted(){
-       console.log(this.songinfo)
+       //console.log(this.songinfo)
     },
     methods:{
         ...mapMutations(['isbofang']),
@@ -33,7 +33,7 @@
         },
         getsong(){
           this.$store.state.ishome=true
-          this.$router.push('/song/'+this.getsongid)
+          this.$router.push('/song')
         }
     },
     computed:{

@@ -21,41 +21,50 @@
 </template>
 
 <script>
-  import {getranking} from '@/api/home'
+  import {getranking,rankingid} from '@/api/home'
   import HomeSongItem from './HomeSongItem.vue'
   export default {
     name: 'HomerAnking',
 	data(){
 		return{
-			ankinglist:null,
-			titlelist:null
+			ankinglist:[],
+			titlelist:null,
+			rankinglist:[]
 		}
 	},
 	created() {
 		//执行函数拿到数据赋值
-		this.getankinglist()
+		this.getrankingid()
+		//this.getankinglist()
 	},
 	mounted() {
-		// console.log(this.titlelist)
+		
 	},
 	components:{
 		HomeSongItem
 	},
 	methods:{
 	//获取歌曲排行榜的数据
-	 async getankinglist(){
-		 let index=5
-		 let datalist=[]
-		 while(index<10){ 
-			 index++
-			 const data=await getranking({idx:index})
-			 let topListItem={name:data.playlist.name,tracks:data.playlist.tracks.splice(0,3)}
-			 datalist.push(topListItem)
-			 this.ankinglist=datalist
-			 // console.log(this.ankinglist)
+     async getrankingid(){
+		 const result = await rankingid()
+		 let index=0
+		 while(index<5){
+			//  this.rankinglist.push(result.list[index++].id)
+			 try{
+				if(this.ankinglist.length===5){
+					return
+				}
+                const data=await getranking({id:result.list[index++].id})
+				//console.log(data)
+				let topListItem={name:data.playlist.name,tracks:data.playlist.tracks.splice(0,3)}
+				this.ankinglist.push(topListItem)
+				//console.log(this.ankinglist.length)
+			 }catch(err){
+                // console.log(err)
+			 } 
 		 }
-		
-	  }
+		//console.log(this.ankinglist)
+	 }
 	}
   }
 </script>

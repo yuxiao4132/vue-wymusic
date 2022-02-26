@@ -25,7 +25,7 @@
 
 <script>
   import { Toast } from 'vant'
-  import {getallmv,mv,getvideo} from '@/api/video'
+  import {getallmv,mv} from '@/api/video'
   import ScrollY from '@/components/ScrollY'
   import {itemListenerMixin} from '@/common/mixin'
   export default {
@@ -57,36 +57,41 @@
     watch:{
        active(val,oldVal){
          if(val==0){
-              this.videosall1()
+              this.videosall()
             }else if(val==1){
-               this.videosall2()
+               this.videosall(false,'港台')
             }else if(val==2){
-               this.videosall3()
+               this.videosall(false,'欧美')
             }else if(val==3){
-              this.videosall4()
+              this.videosall(false,'内地')
             }else if(val==4){
-              this.videosall5()
+              this.videosall(false,'日本')
             }else if(val==5){
-              this.videosall6()
+              this.videosall(false,'韩国')
             }else if(val==6){
-              this.videosall7()
+              this.videosall(false,'官方版')
             }else if(val==7){
-              this.videosall8()
+              this.videosall(false,'现场版')
             }else if(val==8){
-              this.videosall9()
+              this.videosall(false,'网易出品')
             }
        }
     },
     created(){
-        this.videosall1()
+      this.videosall('')
+    },
+    activated(){
+      this.$refs.scroll.refresh()
     },
     destroyed(){
       this.$bus.$off('itemImageLoad',this.itemImgListener)
+      this.$bus.$off('current')
     },
     methods:{
-      async video(){
-         const data=await getvideo({id:9104})
-         console.log(data)
+      currentoff(){
+        this.currentindex=null
+        this.offset=1
+        this.shiping=[]
       },
         imgLoad(){
           this.$bus.$emit('itemImageLoad')
@@ -102,188 +107,50 @@
             forbidClick: true,
           });
           this.offset+=10
-          console.log(this.offset)
+          //console.log(this.offset)
           if(this.active==0){
-              this.videosall1(flag)
+              this.videosall(flag,'')
             }else if(this.active==1){
-               this.videosall2(flag)
+               this.videosall(flag,'港台')
             }else if(this.active==2){
-               this.videosall3(flag)
+               this.videosall(flag,'欧美')
             }else if(this.active==3){
-              this.videosall4(flag)
+              this.videosall(flag,'内地')
             }else if(this.active==4){
-              this.videosall5(flag)
+              this.videosall(flag,'日本')
             }else if(this.active==5){
-              this.videosall6(flag)
+              this.videosall(flag,'韩国')
             }else if(this.active==6){
-              this.videosall7(flag)
+              this.videosall(flag,'官方版')
             }else if(this.active==7){
-              this.videosall8(flag)
+              this.videosall(flag,'现场版')
             }else if(this.active==8){
-              this.videosall9(flag)
+              this.videosall(flag,'网易出品')
             }
-          Toast.success('加载成功');
-           this.$refs.scroll.finishPullUp()
-           this.$refs.scroll.finishPullDown()
         },
-        async videosall1(flag){
-           this.$bus.$on('current',()=>{
-            this.offset=1
-            this.shiping=[]
-          })
-           const {data}=await getallmv({
-             limit:10,
-             offset:this.offset
-           })
-           if(flag){
-             this.shiping.push(...data)
-           }else{
-             this.shiping.unshift(...data)
+        async videosall(flag=null,type){
+          console.log(this.offset)
+           this.$bus.$on('current',this.currentoff)
+           try{
+              const {data}=await getallmv({
+              limit:10,
+              offset:this.offset,
+              area:type
+            })
+            if(flag){
+              this.shiping.push(...data)
+              this.$refs.scroll.finishPullUp()
+            }else{
+              this.shiping.unshift(...data)
+              this.$refs.scroll.finishPullDown()
+            }
+            Toast.success('加载成功');
+            console.log(data,type)
+           }catch(err){
+            Toast.fail('暂无更多视频');
+            return false
            }
-        },
-         async videosall2(flag){
-          this.$bus.$on('current',()=>{
-            this.currentindex=null
-            this.offset=1
-            this.shiping=[]
-          })
-           const {data}=await getallmv({
-             limit:10,
-             offset:this.offset,
-             area:'港台'
-           })
-           if(flag){
-             this.shiping.push(...data)
-           }else{
-             this.shiping.unshift(...data)
-           }
-        },
-
-        async videosall3(flag){
-          this.$bus.$on('current',()=>{
-            this.currentindex=null
-            this.offset=1
-            this.shiping=[]
-          })
-           const {data}=await getallmv({
-             limit:10,
-             area:'欧美',
-             offset:this.offset
-           })
-           if(flag){
-             this.shiping.push(...data)
-           }else{
-             this.shiping.unshift(...data)
-           }
-        },
-
-        async videosall4(flag){
-          this.$bus.$on('current',()=>{
-            this.currentindex=null
-            this.offset=1
-            this.shiping=[]
-          })
-           const {data}=await getallmv({
-             limit:10,
-             area:'内地',
-             offset:this.offset
-           })
-           if(flag){
-             this.shiping.push(...data)
-           }else{
-             this.shiping.unshift(...data)
-           }
-        },
-
-        async videosall5(flag){
-          this.$bus.$on('current',()=>{
-            this.currentindex=null
-            this.offset=1
-            this.shiping=[]
-          })
-           const {data}=await getallmv({
-             limit:10,
-             area:'日本',
-             offset:this.offset
-           })
-          if(flag){
-             this.shiping.push(...data)
-           }else{
-             this.shiping.unshift(...data)
-           }
-        },
-
-        async videosall6(flag){
-          this.$bus.$on('current',()=>{
-            this.currentindex=null
-            this.offset=1
-            this.shiping=[]
-          })
-           const {data}=await getallmv({
-             limit:10,
-             area:'韩国',
-             offset:this.offset
-           })
-           if(flag){
-             this.shiping.push(...data)
-           }else{
-             this.shiping.unshift(...data)
-           }
-        },
-
-        async videosall7(flag){
-          this.$bus.$on('current',()=>{
-            this.currentindex=null
-            this.offset=1
-            this.shiping=[]
-          })
-           const {data}=await getallmv({
-             limit:10,
-             type:'官方版',
-             offset:this.offset
-           })
-           if(flag){
-             this.shiping.push(...data)
-           }else{
-             this.shiping.unshift(...data)
-           }
-        },
-
-        async videosall8(flag){
-          this.$bus.$on('current',()=>{
-            this.currentindex=null
-            this.offset=1
-            this.shiping=[]
-          })
-           const {data}=await getallmv({
-             limit:10,
-             type:'现场版',
-             offset:this.offset
-           })
-          if(flag){
-             this.shiping.push(...data)
-           }else{
-             this.shiping.unshift(...data)
-           }
-        },
-
-        async videosall9(flag){
-          this.$bus.$on('current',()=>{
-            this.currentindex=null
-            this.offset=1
-            this.shiping=[]
-          })
-           const {data}=await getallmv({
-             limit:10,
-             type:'网易出品',
-             offset:this.offset
-           })
-           if(flag){
-             this.shiping.push(...data)
-           }else{
-             this.shiping.unshift(...data)
-           }
-        },
+        }
     }
   }
 </script>
@@ -307,10 +174,7 @@
    width: 300px;
    height: 200px;
  }
-//  .shiping>img{
-//    position: relative;
-//    display: block;
-//  }
+
  .videoimg{
    width: 300px;
    height: 200px;

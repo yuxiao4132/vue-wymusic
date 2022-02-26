@@ -2,7 +2,7 @@
 	<div class="login-container">
 		<!-- 导航栏 -->
 	   <TobTab class="tobtab">
-			<div slot="left"><span @click="$router.back()" class="iconfont icon-fanhui"></span></div>
+			<div slot="left"><span @click="back()" class="iconfont icon-fanhui"></span></div>
 			<div slot="center" class="center">
 				<p>登录/注册</p>
 			</div>
@@ -70,6 +70,9 @@
     TobTab
   },
 	methods:{
+		back(){
+          this.$router.push('/my')
+		},
 		async onLogin(){
 			this.$toast.loading({
 			  message: '加载中...',
@@ -77,13 +80,22 @@
 			  duration:0
 			})
 			try{
-		  const {account}=await getphone({
+		  const data=await getphone({
           phone:this.user.mobile,
           password:this.user.code
         })
+		console.log(data)
+		this.$store.state.userid=data.account.id
 		this.$store.state.isLogin=true
-		this.userdata(account.id)
-        window.localStorage.setItem('userid',account.id)
+		this.$store.state.token=data.token
+		window.localStorage.setItem('userid',data.account.id)
+		const userinfo={
+			userimg:data.profile.avatarUrl,
+			username:data.profile.nickname
+		}
+        this.$store.state.userinfo=userinfo
+		// this.userdata(account.id)
+        window.localStorage.setItem('token',data.token)
 				this.$toast.success('登录成功')
 				this.$router.push('/')
 			}
@@ -91,14 +103,10 @@
 				this.$toast.fail('登录失败,手机号或密码错误')
 			}
 		},
-		async userdata(userid){
-           const {profile}=await getuserdata({uid:userid})
-		   const userinfo={
-			   userimg:profile.avatarUrl,
-			   username:profile.nickname
-		   }
-           this.$store.state.userinfo=userinfo
-       },
+	// 	async userdata(userid){
+    //        const {profile}=await getuserdata({uid:userid})
+		   
+    //    },
 		onFailed(error){
 			if(error.errors[0]){
 				this.$toast({

@@ -64,15 +64,16 @@
 			required:true
 		}
 	},
-	created() {
+	mouthed() {
 		// console.log(this.info)
-	
+	  
 	},
 	components:{
 		TobTab
 	}, 
 	methods:{
 		imgLoad(){
+			console.log(this.info)
 			this.$bus.$emit('itemImageLoad')
 		},
 		getoverlay(){
@@ -80,8 +81,16 @@
 			this.$emit('isZindex')
 		},
 		commentclick(){
+			this.$store.state.commenttype=2
 			//跳转歌单评论页面
-			this.$router.push('/sheetcomment/'+this.$route.params.id)
+			this.$store.state.commentinfo={
+				img:this.info.uimgurl,
+				title:this.info.name,
+				name:this.info.uname,
+				commentCount:this.info.commentCount
+			}
+			console.log(this.$store.state.commentinfo)
+			this.$router.push('/comment/'+this.$route.params.id)
 		}
 	}
   } 

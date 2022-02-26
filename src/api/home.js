@@ -23,3 +23,10 @@ export const getranking=params=>{
 		params
 	})
 }
+
+export const rankingid=()=>{
+	return request({
+		method:'GET',
+		url:'/toplist',
+	})
+}

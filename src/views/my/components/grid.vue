@@ -20,7 +20,7 @@
         </div>
      </van-grid-item>
      <van-grid-item>
-        <div class="item">
+        <div class="item" @click="gosong">
           <span class="iconfont icon-24gf-playCircle gridfont"></span>
           <span>最近播放</span>
         </div>
@@ -54,11 +54,34 @@
 </template>
 
 <script>
+  import {mapGetters} from 'vuex'
   export default {
     name: 'Grid',
     data(){
       return {
 
+      }
+    },
+    computed:{
+		  ...mapGetters(['isLogin','getuserinfo'])
+	  },
+    methods:{
+      gosong(){
+        if(this.isLogin && this.getuserinfo){
+         // console.log('mysong')
+          this.$router.push('/mysong')
+        }else{
+          console.log('mysong2')
+          this.$dialog.confirm({
+          title: '您还没有登录',
+          message: '需要跳转到登录页面吗？',
+            }).then(() => {
+             this.$router.push('/login')
+           })
+           .catch(() => {
+             return
+           });
+        }
       }
     }
   }

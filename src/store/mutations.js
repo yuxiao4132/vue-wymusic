@@ -1,34 +1,29 @@
 // import router from '@/router'
 export default{
     reducemodify(state){
-        if(state.currentindex<=1){
-            state.currentindex=state.songlist.length
-        }else{
-            state.currentindex--
+        state.currentindex--
+        state.currentindexs--
+        if(state.currentindex<0){
+            state.currentindex=state.songlist.length-1
+            state.currentindexs=state.songlist.length-1
         }
     },
     addmodify(state){
-       
-        if(state.currentindex>=state.songlist.length){
-            state.currentindex=1
-        }else{
-            state.currentindex++
-            state.currentindexs++
+        state.currentindex++
+        state.currentindexs++
+        if(state.currentindex>state.songlist.length-1){
+            state.currentindex=0
+            state.currentindexs=0
         }
-        console.log(state.currentindex)
     },
-    // addcurrentindex(state){
-    //    state
-    // },
     addfirst(state){
         state.first.zan++
-        console.log(state.first.zan)
     },
     removefirst(state){
         state.first.zan--
-        console.log(state.first.zan)
     },
     isbofang(state){
+        console.log('???')
         state.isbofang=!state.isbofang
     }
 }

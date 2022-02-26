@@ -14,14 +14,19 @@
 		<div class="sheetitem" v-for="(item,index) in songlist"
 		@click="getsong(index)">
 		  <div class="left">
-			<span v-if="++index===currentindex" class="iconfont icon-yinpin"></span>
-			<span v-else class="index">{{index}}</span>
+			<div v-if="item.al">
+				<span v-if="index===currentindex" class="iconfont icon-yinpin"></span>
+				<span v-else class="index">{{index |  indexadd}}</span>
+			</div>
 			<div class="songcontent">
-				<p>{{item.al.name}}</p>
+				<p>{{item |  getzhuanji}}</p>
 				<div>
-					<span class="content">{{item.ar[0].name}}</span>
+					<span>{{item |  getauth}}</span>
 					<span>-</span>
-					<span class="content">{{item.al.name}}</span>
+					<span>{{item |  getname}}</span>
+					<!-- <span class="content">{{item.ar[0].name}}</span>
+					<span>-</span>
+					<span class="content">{{item.al.name}}</span> -->
 				</div>
 			</div>
 		  </div>
@@ -45,27 +50,42 @@
 			id:null
 		}
 	},
+	filters:{
+		//过滤器,接受传进来的参数。返回需要做相应处理判断的值
+		getname:function(value){
+			return value.al ? value.al.name : value.song.al.name
+		},
+		getauth:function(value){
+			return value.al ? value.ar[0].name : value.song.ar[0].name
+		},
+		getzhuanji:function(value){
+			return value.al ? value.name : value.song.name
+		},
+		indexadd:function(value){
+			return ++value
+		}
+	},
 	computed:{
        ...mapGetters([
             'getissheet',
 			'currentindex'
         ]),
 	},
-	created() {
-		this.getsheetid()
-		// 进入页面时判断上一次离开和下一次进入的是否为相同
-		// 如果相同，赋值上一次再本歌单的歌曲
-		if(this.getissheet && this.$route.params.id===localStorage.getItem('id')){
+	mounted(){
+		// console.log(this.$store.state.sheetid)
+		if(this.getissheet && this.$route.params.id===this.$store.state.sheetid){
 			this.$store.state.currentindex=this.$store.state.currentindexs
 		}else{
 	       this.$store.state.currentindex=null
 		}
 	},
-	beforeDestroy(){
-		if(this.$store.state.currentindex){
-           this.$store.state.currentindexs=this.$store.state.currentindex
-		}
-	},
+	// beforeDestroy(){
+		
+	// 	if(this.$store.state.currentindex){
+    //        this.$store.state.currentindexs=currentindex
+	// 	}
+	// 	console.log(this.$store.state.currentindexs)
+	// },
 	props:{
 		songlist:{
 			type:Array,
@@ -73,28 +93,37 @@
 		},
 		sheetid:{
 			type:[Number,String],
-			required:true
+			default:null
 		}
 	},
 	methods:{
-		getsheetid(){
-           this.id=this.$route.params.id
-		},
 		getsong(index){
 			//跳转时重置歌单内容和索引,并且本地储存离开时歌单的id
 			//这边-1是索引为1开始,数组索引为0开始
 			this.$store.state.currentindex=index
+			this.$store.state.currentindexs=index
 			this.$store.state.songlist=this.songlist
-			this.$store.state.issheet=true
 			this.$store.state.ishome=false
-			this.$store.state.songid=this.songlist[index-1].id
-			console.log(this.$store.state.currentindex)
-			if(window.localStorage.getItem('songid')!==this.songlist[index-1].id){
-				this.$store.state.isbofang=true
+			// console.log(index)
+			// console.log(this.songlist[index])
+			this.$store.state.songid=this.songlist[index].song ? this.songlist[index].song.id : this.songlist[index].id
+			//console.log(this.songlist[index].song.id)
+			//console.log(this.songlist[index-1].song)
+			//console.log(this.songlist[index].song.id
+			this.$store.state.isbofang=true
+			if(this.songlist[index].song){
+               this.$store.state.issheet=false
+			}else{
+			   this.$store.state.issheet=true
 			}
-			this.$router.push('/song/'+this.songlist[index-1].id)
-			// this.$router.push('/search')
-			localStorage.setItem('id',this.id)
+		
+			this.$store.state.sheetid=this.$route.params.id
+               // localStorage.setItem('id',this.id)
+			
+            // console.log(index)
+			// console.log(this.songlist.length-1)
+			this.$router.push('/song')
+			
 		}
 	}
   }

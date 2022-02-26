@@ -11,9 +11,16 @@
 	 			</div>
 	 			<div class="right" slot="right"><span class="iconfont icon-fenxiang"></span></div>
 	 </TobTab>
-	 
-	 <div class="imgdetail">
-		 <div class="babing" :class="getisbofang ? 'babingzhuan':'' ">
+	 <div class="lyric" @touchmove="touchmove" ref="lyrics" v-if="lyric" @click="lyricclick">
+		<div class="lyriclist" ref="lyriclist">
+			<p v-for="(item,index) in lyricvalue" ref="lyric">
+               {{item.lyric}}
+			</p>
+		</div>
+	 </div>
+
+	 <div class="imgdetail" v-else @click="lyricclick">
+		 <div class="babing" ref="babing" :class="getisbofang ? 'babingzhuan':'' ">
 			 <img src="../../static/images/needle.png" />
 		 </div>
 		 <div class="heijiao" :class="getisbofang ? 'animation':'' ">
@@ -21,7 +28,7 @@
 		   <img class="touxiang" :src="songinfo.imgurl">
 		 </div>
 	 </div>
-	 
+	
 	 <div class="nabbar">
 		 <div class="navbarinfo">
 			 <span class="iconfont icon-aixin"></span>
@@ -37,18 +44,22 @@
 		 <div class="songset">
 			 <span class="iconfont icon-suiji"></span>
 			 <span @click="pern" class="iconfont icon-shangyishoushangyige"></span>
-			 <span @click="bofang" :class="getisbofang ? 'iconfont icon-zanting' : 'iconfont icon-bofang' "></span>
+			 <span @click="bofang" :class="count ? 'iconfont icon-zanting' : 'iconfont icon-bofang' "></span>
 			 <span @click="next" class="iconfont icon-xiayigexiayishou"></span>
 			 <span class="iconfont icon-daohang"></span>
 		 </div>
+		 <!-- <p>{{getlyric}}</p> -->
 	 </div>
  </div>
 </template>
 
 <script>
-  import {mapGetters,mapMutations} from 'vuex'
+  import $ from 'jquery'
+  import {mapGetters,mapMutations,mapState} from 'vuex'
   import TobTab from '@/components/TobTab'
   import AudioIndex from '@/components/audio'
+  import ScrollY from '@/components/ScrollY' 
+  import {debounce} from 'lodash'
   export default {
     name: 'SongIndex',
 	data(){
@@ -59,25 +70,108 @@
 			imgurl:null,
 			musicurl:'',
 			songlength:null,
-			pingcount:null
+			pingcount:null,
+			lyric:false,
+			lyriclist:[],
+			lyricindexlist:[],
+			isActive:true,
+			transform:0,
+			timearr:0,
+			scrollflag:true,
+			scrolltime:null,
+			height:0
 		}
 	},
-	created(){
-      window.localStorage.setItem('songid',this.getsongid)
+	mounted(){
+		
+        // console.log($)
 	},
 	computed:{
+	   ...mapState({
+		   count:'isbofang'
+	   }),
        ...mapGetters([
-                'currentindex',
-                'songlist',
-				'getisbofang',
-				'songinfo',
-				'getsongid',
-				'getishome'
+			'currentindex',
+			'songlist',
+			'getisbofang',
+			'songinfo',
+			'getsongid',
+			'getishome',
+			'getlyric',
+			'gettime'
         ]),
+	   lyricvalue(){
+           let lyricstring=this.getlyric.split("\n")
+		   for(let i=0;i<lyricstring.length;i++){
+			   const lyricafter = lyricstring[i].indexOf("]")
+			   const lyricfront = lyricstring[i].indexOf("[")
+			   const index = lyricstring[i].substring(lyricfront+1,9)
+			   const value = lyricstring[i].substring(lyricafter+1,lyricstring[i].length)
+			    const fen=index.slice(1,2)
+				const miao=index.substring(3,4)
+				if(miao<1 && fen<1){
+					index=index.substring(4,index.length)
+				}else if(fen<1){
+					index=index.slice(3,index.length)
+				}else if(fen>=1){
+					index=(fen*60)+Number(index.slice(3,index.length))
+				}
+			    this.lyriclist[i]={
+				   flag:index,
+				   lyric:value
+			    }
+				//console.log(this.lyriclist)
+		   }
+		   return this.lyriclist
+	   }
+	},
+	watch:{ 
+	   //当播放时间发生改变就执行下面逻辑保证准确性
+       gettime(val){
+		//    console.log(val)
+		  if(this.lyric){//当我展示了歌词模板才执行
+           const timearr=[]//播放了多少条歌词的数组
+		//console.log(this.lyriclist)
+		   for(let i=0;i<this.lyriclist.length-1;i++){
+			   //循环遍历当前播放时长播放了多少条句子
+			   if(val>this.lyriclist[i].flag){
+				//当前正在播放的句子变黄,就是播放了歌词的数组里面最大的那一个
+				this.$refs.lyric[i].style.color='yellow'
+				//添加到已播放的数组里面
+				 timearr.push(this.$refs.lyric[i])
+			   }else{
+				   //还没有播放过的全部变白
+				 this.$refs.lyric[i].style.color='white'
+			   }
+		   }
+		   //设置播放了多少条歌词的长度,也告诉我当前播放的是第几条歌词
+		    this.timearr=timearr.length
+           //这里是把所有已经播放完的歌词变白,以保持只有我当前正在播放的歌词变黄
+           for(let i=0;i<this.timearr-1;i++){
+			   this.$refs.lyric[i].style.color='white'
+		   }
+		 }  
+	    },
+		getlyric(val){
+           this.lyriclist=[]
+		},
+		//这里是当我们的已播放歌词长度发生改变的时候,
+		//设置新的当前正在播放的歌词和播放了多少条歌词相对应的translateY
+		//让其滚动区域,和正在播放的歌词显示在可视区域范围之内
+		timearr(val){
+			console.log(this.height)
+			//在这里获取意味着长度发生变化就要滚动,也就表明lyricvalue数据加载完毕歌词已经渲染出来了
+			//所以在滚动的时候就可以获取滚动的高度
+			this.height = this.$refs.lyriclist.offsetHeight/this.lyricvalue.length+3
+			if(this.scrollflag){
+				$(this.$refs.lyrics).animate({scrollTop: `${this.height*val}px`}, 500)
+			}
+		}
 	},
 	components:{
 		TobTab,
-		AudioIndex
+		AudioIndex,
+		ScrollY
 	},
 	filters:{
 		luncount:function(value){
@@ -93,46 +187,54 @@
 	methods:{
 		...mapMutations(['addmodify','reducemodify','isbofang']),
 		comeback(){
-		  if(this.songlist.length<=3){
-			 this.$store.state.issheet=false
-			 this.$router.push('/')
-		  }else if(this.getishome){
-             this.$router.push('/')
-		  }else if(this.songlist.length>10){
-			 this.$store.state.issheet=false
-			 this.$router.push('/search')
-		  }
-		  else{
-             this.$router.push('/sheet/'+window.localStorage.getItem('sheetid')) 
-		  }
+		  this.$router.back()
+		},
+		touchmove(event){
+			console.log(this.$refs.lyrics.scrollHeight)
+			this.scrolltime=null
+			this.scrollflag=false
+			this.scrolltime=setTimeout(()=>{
+				//$(this.$refs.lyrics).animate({scrollTop: `${this.height*this.timearr}px`}, 500)
+				this.scrollflag=true
+			},4000)
+		},
+		lyricclick(){
+            this.lyric=!this.lyric
 		},
 		pern(){
+			clearTimeout(this.scrolltime)
+			this.scrollflag=true
+			this.timearr=0
 			this.$store.state.isbofang=true
 			this.reducemodify()
-			this.$store.state.songid=this.songlist[this.currentindex-1].id
-			this.$router.push({
-				params:{
-					id:this.songlist[this.currentindex-1].id
-				}
-			})
-
+			//console.log(this.currentindex)
+			this.$store.state.songid=this.songlist[this.currentindex].song ? this.songlist[this.currentindex].song.id : this.songlist[this.currentindex].id
 		},
 		next(){
+			clearTimeout(this.scrolltime)
+			this.scrollflag=true
+			this.timearr=0
 			this.$store.state.isbofang=true
 			this.addmodify()
-			this.$store.state.songid=this.songlist[this.currentindex-1].id
-			this.$router.push({
-				params:{
-					id:this.songlist[this.currentindex-1].id
-				}
-			})
-			// this.$router.push('/song/'+this.songlist[this.currentindex-1].id)
+			// this.$store.state.currentindex+=1
+			//console.log(this.$store.state.currentindex)
+			// console.log('!!!')
+			this.$store.state.songid=this.songlist[this.currentindex].song ? this.songlist[this.currentindex].song.id : this.songlist[this.currentindex].id
 		},
 		bofang(){
+			console.log(this.$refs.lyrics)
+			// console.log(this.lyriclist.length)
 			this.isbofang()
 		},
 		songclick(){
-			this.$router.push('/songcomment/'+this.$route.params.id)
+			this.$store.state.commenttype=0
+			//console.log(this.songinfo)
+			this.$store.state.commentinfo={
+				img:this.songinfo.imgurl,
+				title:this.songinfo.title,
+				name:this.songinfo.name
+			}
+			this.$router.push('/comment/'+this.getsongid)
 		}
 	}
   }
@@ -143,10 +245,22 @@
 	  padding: 0 10px;
 	  background-color: #C0C0C0;
 	  width: 100%;
-	  height: 100%;
+	  height: 100vh;
 	  display: flex;
 	  flex-direction: column;
 	  position: relative;
+  }
+  .active{
+	  color:yellow !important;
+	  font-size:21px !important;
+  }
+  .content{
+	  position: absolute;
+	  left: 0;
+	  right: 0;
+	  top: 44px;
+	  bottom: 320px;
+	  /* z-index: -1; */
   }
   .tobtab{
 	  display: flex;
@@ -171,11 +285,31 @@
 	  margin-top: 10px;
   }
   .imgdetail{
+	 height: 550px;
 	 margin: 0 auto;
 	 display: flex;
 	 flex-direction: column;
 	 justify-content: center;
   }
+  .lyric{
+	  height: 550px;
+	  overflow: auto; 
+	  font-size: 18px;
+	  text-align: center;
+  }
+  .lyriclist{
+     transition: transform 1s;
+	 position: relative;
+	 top: 380px;
+  }
+  .lyriclist p{
+	  color: #fff;
+	  margin: 15px 0;
+  }
+  .lyric::-webkit-scrollbar {
+      width: 0;
+	  height: 100px;
+   }
   .disc{
 	  width: 300px;
 	  height: 300px;
@@ -201,6 +335,7 @@
 	 transform: rotateX(-40deg);
 	 transition: transform 1s;
 	 z-index: 9;
+	 transform: translateY(0)
   }
   .babingzhuan{
 	transform: rotateX(0deg); 
@@ -249,12 +384,12 @@
 	  right: -28px;
 	  z-index: 99;
   }
- @keyframes disc {
+ /* @keyframes disc {
     from {
       transform: rotate(0deg);
     }
     to {
       transform: rotate(360deg);
     }
-  }
+  } */
 </style>

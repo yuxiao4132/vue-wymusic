@@ -12,9 +12,9 @@
 		<ScrollY :class="songinfo ? 'contents' : 'content'" ref="scroll" 
 		:probe-type="3"
 		:pull-up-load="true"
-		horizontal="horizontal"
+		
 		>
-		<HomeSwiper></HomeSwiper>
+		<HomeSwiper @click="this.swiperclick()"></HomeSwiper>
 		<HomeCategory></HomeCategory>
 		<HomeSong></HomeSong>
 		<HomerAnking></HomerAnking>
@@ -49,6 +49,11 @@
        ...mapGetters([
             'songinfo'
         ]),
+	},
+	methods:{
+		swiperclick(){
+			console.log('???')
+		}
 	},
 	//混入事件
 	mixins:[itemListenerMixin],

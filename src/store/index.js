@@ -8,7 +8,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    token:window.localStorage.getItem('token'),
 	  currentindex:null,
+    userid:null,
 	  songlist:[],
     active:0,
     sheetinfo:null,
@@ -27,7 +29,10 @@ export default new Vuex.Store({
     issheet:true,
     userinfo:null,
     songid:null,
-    ishome:false
+    ishome:false,
+    commentinfo:null,
+    commenttype:null,
+    lyric:''
   },
   mutations,
   actions,

@@ -40,11 +40,10 @@
         videonames:['全部','港台','欧美','内地','日本','韩国','官方版','现场版','网易出品']
       }
     },
-	// mixins:[itemListenerMixin],
-	// activated(){
-    // //   this.$refs.scroll.scrollTo(0,this.saveY,0)
-    //   this.$refs.scroll.refresh()
-    // },
+	created(){
+		console.log('???')
+      this.active=0
+	},
     components:{
       TobTab,
 	  Videos,
@@ -52,11 +51,8 @@
     },
 	methods:{
 		tabClick(){
-			this.$bus.$emit('current')
+		  this.$bus.$emit('current')
 		},
-		loadMore(){
-
-		}
 	}
   }
 </script>

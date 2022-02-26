@@ -38,13 +38,15 @@
 	  </TobTab>
 	  <ScrollY class="content" ref="scroll" 
 		:probe-type="3"
-		:pull-up-load="true">
+		:pull-up-load="true"
+		@pullingUp="loadMore">
 	    <SheetInfo
 		 :info="sheetinfo"
 		 @isZindex="isZindex"></SheetInfo>
 	    <SheetSong 
-		:songlist="tracks"
-		:sheetid="id"></SheetSong>
+		:songlist="sheetarr"
+		:sheetid="id">
+		</SheetSong>
 	  </ScrollY>
     </div>
 </template>
@@ -54,10 +56,12 @@
   //歌单信息组件
   import SheetInfo from './components/SheetInfo.vue'
   //歌单歌曲组件
-  import SheetSong from './components/SheetSong.vue'
+  import SheetSong from '../../components/SheetSong.vue'
   import ScrollY from '@/components/ScrollY'	
-  import {getsheet} from '@/api/sheet'
+  import {getsheet,getsong} from '@/api/sheet'
   import {itemListenerMixin} from '@/common/mixin'
+  import { Toast } from 'vant'
+  import {mapGetters} from 'vuex'
   export default {
     name: 'SheetIndex',
 	data(){
@@ -67,7 +71,9 @@
 			sheetinfo:{},
 			tracks:[],
 			show:false,
-			tags:null
+			tags:null,
+			sheetflag:0,
+			sheetarr:[]
 		}
 	},
 	mixins:[itemListenerMixin],
@@ -83,6 +89,7 @@
 		ScrollY,
 		TobTab
 	},
+
 	methods:{
 		async sheetall(){
 			this.$bus.$on('initial',()=>{
@@ -105,11 +112,32 @@
 			}
 			this.sheetinfo=sheetinfo
 			//歌单歌曲数据
-			this.tracks=this.sheetlist.tracks
+			//this.tracks=this.sheetlist.tracks
+			this.tracks=this.sheetlist.trackIds
+			// console.log(data)
 			//歌单标签数据
 			this.tags=this.sheetlist.tags
 			//赋值vuex sheetinfo的值
 			this.$store.state.sheetinfo=sheetinfo
+			this.getsheetsong()
+		},
+		async getsheetsong(){
+			// getsong
+            // sheetlist
+            for(let i=this.sheetflag;i<this.sheetflag+15;i++){
+				const { songs } = await getsong({ids:this.tracks[i].id})
+				this.sheetarr.push(songs[0])
+				this.$refs.scroll.refresh()
+			}
+			this.$refs.scroll.finishPullUp()
+			this.sheetflag=this.sheetflag+15
+			console.log(this.sheetarr)
+		},
+		loadMore(){
+		   //console.log('???')
+		   this.getsheetsong()
+           Toast.success('加载更多歌曲');
+		   console.log(this.sheetflag)
 		},
 		isZindex(){
 			this.show=!this.show

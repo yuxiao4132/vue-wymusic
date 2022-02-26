@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-   <keep-alive exclude="SheetIndex,sheetcomment,floor,VideoIndex">
+   <keep-alive exclude="SheetIndex,sheetcomment,floor,MySong">
 	   <router-view/>
    </keep-alive>
    <AudioIndex

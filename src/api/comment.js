@@ -1,5 +1,4 @@
-import {request} from '@/utils/request2'
-import {request2} from '@/utils/request'
+import {request} from '@/utils/request'
 
 export const getsheetcomment=params=>{
 	return request({
