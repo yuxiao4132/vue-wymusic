@@ -162,7 +162,7 @@
 		//设置新的当前正在播放的歌词和播放了多少条歌词相对应的translateY
 		//让其滚动区域,和正在播放的歌词显示在可视区域范围之内
 		timearr(val){
-			this.height = this.$refs.lyriclist.offsetHeight/this.lyricvalue.length-1.5
+			this.height = this.$refs.lyriclist.offsetHeight/this.lyricvalue.length-1.2
 			//在这里获取意味着长度发生变化就要滚动,也就表明lyricvalue数据加载完毕歌词已经渲染出来了
 			//所以在滚动的时候就可以获取滚动的高度
 			if(this.scrollflag){

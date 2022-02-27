@@ -12,7 +12,7 @@
 		<ScrollY :class="songinfo ? 'contents' : 'content'" ref="scroll" 
 		:probe-type="3"
 		:pull-up-load="true"
-		
+		horizontal="horizontal"
 		>
 		<HomeSwiper @click="this.swiperclick()"></HomeSwiper>
 		<HomeCategory></HomeCategory>
