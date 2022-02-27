@@ -9,7 +9,7 @@
 "></span></div>
 		</TobTab>
         
-        <van-tabs class="vantab" @click="tabClick" v-model="active">
+        <van-tabs class="vantab" v-model="active">
           <van-tab class="videonames" v-for="(item,index) in videonames"
            :title="item"
            :key="index">
@@ -49,11 +49,6 @@
 	  Videos,
 	  ScrollY
     },
-	methods:{
-		tabClick(){
-		  this.$bus.$emit('current')
-		},
-	}
   }
 </script>
 

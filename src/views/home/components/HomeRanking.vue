@@ -48,13 +48,14 @@
      async getrankingid(){
 		 const result = await rankingid()
 		 let index=0
-		 while(index<5){
+		 while(index<result.list.length){
 			//  this.rankinglist.push(result.list[index++].id)
 			 try{
 				if(this.ankinglist.length===5){
 					return
 				}
                 const data=await getranking({id:result.list[index++].id})
+				// console.log(result.list[index].id)
 				//console.log(data)
 				let topListItem={name:data.playlist.name,tracks:data.playlist.tracks.splice(0,3)}
 				this.ankinglist.push(topListItem)

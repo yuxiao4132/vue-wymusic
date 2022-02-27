@@ -22,8 +22,9 @@
 </template>
 
 <script>
-  import {getmusicurl} from '@/api/song'
-  import {mapGetters,mapMutations, mapState} from 'vuex'
+    import {getlyric} from '@/api/song'
+  import {mapMutations, mapState} from 'vuex'
+  import {songping} from '@/api/comment'
   export default {
     name: 'AudioIndex',
 	data(){
@@ -42,13 +43,10 @@
 			'duration',
 			'width',
 			'songlist',
-			'currentindex'
+			'currentindex',
+			'songid'
 		]),
       showduration(){
-		//   if(parseInt(this.duration/60)<10){
-		// 	  return this.duration
-		//   }
-		//   console.log(this.duration/60)
 		  let fen=parseInt((this.duration/60)) < 10 ? '0'+parseInt((this.duration/60))+':' :  parseInt((this.duration/60))+':'
 		  let ismiao=this.duration-parseInt((this.duration/60))*60
           let miao=Number(ismiao)<10 ? '0'+parseInt(ismiao) : parseInt(ismiao)
@@ -80,13 +78,10 @@
 		 time(val, oldVal){//普通的watch监听
             this.miao=val
 			let product=this.width/this.duration
-			// console.log(this.getduration)
-			// console.log(product)
-
-			// console.log(this.product)
-			//val*product=width
-			// console.log
 			this.$refs.dongtai.style.width=(val*product)+'px' 
+		 },
+		 currentindex(val){
+			 console.log(val)
 		 }
 	},
 	mounted() {
@@ -98,16 +93,23 @@
 	},
 	methods:{
 		...mapMutations(['addmodify','reducemodify']),
+		async getsongping(){
+           const data= await songping({
+			   id:this.songid,
+		   })
+		   this.$store.state.songping=data.total
+		},
+		async musiclyric(){
+            const data = await getlyric({id:this.songid})
+			this.$store.state.lyric=data.lrc.lyric
+		},
 		oncanplay(){
-			// this.songlength=this.$refs.audio.duration
+			this.getsongping()
+			this.musiclyric()
 			this.$store.state.duration=this.$refs.audios.duration
 		},
 		ended(){
-			// console.log('!!!')
           this.addmodify()
-		  //console.log(this.currentindex)
-		//   console.log(this.songlist[this.currentindex].id)
-		//   this.$store.state.currentindex
 		  this.$store.state.songid=this.songlist[this.currentindex].song ? this.songlist[this.currentindex].song.id : this.songlist[this.currentindex].id
 		},
 		durationchange(){

@@ -72,11 +72,12 @@
         ]),
 	},
 	mounted(){
-		// console.log(this.$store.state.sheetid)
-		if(this.getissheet && this.$route.params.id===this.$store.state.sheetid){
-			this.$store.state.currentindex=this.$store.state.currentindexs
-		}else{
-	       this.$store.state.currentindex=null
+		if(this.$route.name.name=='sheet'){
+			if(this.getissheet && this.$route.params.id===this.$store.state.sheetid){
+			  this.$store.state.currentindex=this.$store.state.currentindexs
+			}else{
+			  this.$store.state.currentindex=null
+			}	
 		}
 	},
 	// beforeDestroy(){
@@ -118,10 +119,6 @@
 			}
 		
 			this.$store.state.sheetid=this.$route.params.id
-               // localStorage.setItem('id',this.id)
-			
-            // console.log(index)
-			// console.log(this.songlist.length-1)
 			this.$router.push('/song')
 			
 		}

@@ -3,9 +3,7 @@
        <div class="propolist">
            <div @click="propoclick(index)" class="info" v-for="(item,index) in propo" :key="index">
                <span class="iconfont icon-sousuo"></span>
-               <span class="name">{{item.artists[0].name}}</span>
-               <span>&nbsp;&nbsp;</span>
-               <span>{{item.name}}</span>
+               <span>{{item.keyword}}</span>
            </div>
        </div>
     </div>
@@ -25,20 +23,11 @@
            require:true
        }
     },
-    created(){
-     
-    },
-    computed:{
-	
-	},
-    mounted(){
-      
-    },
+    
     methods:{
      propoclick(index){
-        const name=this.propo[index].artists[0].name
-        const title=this.propo[index].name
-        this.$emit('propoclick',name+title)
+        let value = this.propo[index]
+        this.$emit('propoclick',value.keyword)
         // console.log(name+title)
      },
     },

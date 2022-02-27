@@ -53,5 +53,8 @@ export default{
     },
     getsheetid(state){
        return state.sheetid
+    },
+    getsongping(state){
+      return state.songping
     }
 }

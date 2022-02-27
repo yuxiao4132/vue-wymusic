@@ -32,7 +32,8 @@ export default new Vuex.Store({
     ishome:false,
     commentinfo:null,
     commenttype:null,
-    lyric:''
+    lyric:'',
+    songping:''
   },
   mutations,
   actions,

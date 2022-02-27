@@ -15,3 +15,11 @@ export const searchresult=params=>{
         params
 	})
 }
+
+export const searchsuggest=params=>{
+	return request({
+		method:'GET',
+		url:'/search/suggest',
+        params
+	})
+}

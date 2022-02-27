@@ -11,11 +11,11 @@
 <script>
   //引入bottom组件并配置再相应的组件中
   import {getsong} from '@/api/sheet'
-  import {getmusicurl,getlyric} from '@/api/song'
-  import {songping} from '@/api/comment'
+  import {getmusicurl} from '@/api/song'
+  import { Toast } from 'vant'
   import audioinfo from '@/components/audioinfo'
   import BottomTabbar from '@/components/Tabbar.vue'
-  import {mapGetters} from 'vuex'
+  import {mapGetters,mapMutations} from 'vuex'
   export default {
     name: 'LayoutIndex',
 	data(){
@@ -30,10 +30,8 @@
 	watch:{
        'getsongid':{
 		   handler:function(val){
-			//    console.log('???')
 			  this.geturl()
 			  this.getsongs()
-			  this.musiclyric()
 		   }
 	   }
 	},
@@ -41,43 +39,26 @@
          ...mapGetters([
              'songinfo',
 			 'getsongid',
-			 'musicurl'
+			 'musicurl',
+			 'currentindex',
+			 'songlist'
         ]),
     },
 	methods:{
+		...mapMutations(['addmodify']),
 		async geturl(){
 			const data = await getmusicurl({id:this.getsongid})
+			if(data.data[0].url==null){
+				Toast.fail('你没有播放权限,为你播放下一首');
+				this.addmodify()
+				this.$store.state.songid=this.songlist[this.currentindex].song ? this.songlist[this.currentindex].song.id : this.songlist[this.currentindex].id
+			}
             this.$store.state.musicurl=data.data[0].url
 			console.log(data)
 		},
-		async musiclyric(){
-            const data = await getlyric({id:this.getsongid})
-			this.$store.state.lyric=data.lrc.lyric
-			// console.log(this.$store.state.lyric)
-		},
 		async getsongs(){
-			this.getsongping()
 			const data=await getsong({ids:this.getsongid})
-			const sheetinfo={
-				imgurl:data.songs[0].al.picUrl,
-				title:data.songs[0].name,
-				name:data.songs[0].ar[0].name,
-				count:this.pingcount
-				// count:this.pingcount
-			}
-			// this.$store.state.sheetinfo=sheetinfo
-			this.$store.state.songinfo=sheetinfo
-			// console.log(this.$store.state.songinfo)
-			// console.log(data)
-		},
-
-		async getsongping(){
-			
-           const data= await songping({
-			   id:this.getsongid,
-		   })
-		   this.pingcount=data.total
-		//    console.log(this.pingcount)
+			this.$store.state.songinfo=data
 		},
 	}
   }

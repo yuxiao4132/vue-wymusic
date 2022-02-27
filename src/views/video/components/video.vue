@@ -56,6 +56,10 @@
      mixins:[itemListenerMixin],
     watch:{
        active(val,oldVal){
+         this.currentindex=null
+         this.offset=1
+         this.shiping=[]
+         this.$refs.scroll.scrollTo(0,0,0)
          if(val==0){
               this.videosall()
             }else if(val==1){
@@ -85,14 +89,8 @@
     },
     destroyed(){
       this.$bus.$off('itemImageLoad',this.itemImgListener)
-      this.$bus.$off('current')
     },
     methods:{
-      currentoff(){
-        this.currentindex=null
-        this.offset=1
-        this.shiping=[]
-      },
         imgLoad(){
           this.$bus.$emit('itemImageLoad')
         },
@@ -106,7 +104,7 @@
             message: '加载中...',
             forbidClick: true,
           });
-          this.offset+=10
+          this.offset+=15
           //console.log(this.offset)
           if(this.active==0){
               this.videosall(flag,'')
@@ -129,11 +127,9 @@
             }
         },
         async videosall(flag=null,type){
-          console.log(this.offset)
-           this.$bus.$on('current',this.currentoff)
            try{
               const {data}=await getallmv({
-              limit:10,
+              limit:15,
               offset:this.offset,
               area:type
             })

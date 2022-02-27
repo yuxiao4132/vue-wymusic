@@ -1,10 +1,10 @@
 <template>
 	<div class="audioinfo">
 	   <div class="songinfo" @click="getsong" v-if="songinfo">
-          <img :src="songinfo.imgurl"/>
-          <span class="title">{{songinfo.title}}</span>
+          <img :src="songinfo.songs[0].al.picUrl"/>
+          <span class="title">{{songinfo.songs[0].name}}</span>
           <span class="margin">-</span>
-          <span class="name">{{songinfo.name}}</span>
+          <span class="name">{{songinfo.songs[0].ar[0].name}}</span>
        </div>
        <div v-else></div>
        <div class="stop">
@@ -23,9 +23,6 @@
         
       }
 	},
-    mounted(){
-       //console.log(this.songinfo)
-    },
     methods:{
         ...mapMutations(['isbofang']),
         bofang(){

@@ -23,7 +23,7 @@
          <searchhot @gethot='gethot'></searchhot>
         </div>
        <searchproposal  v-show="proshow" @propoclick="propoclick" :propo='propolist' class="proposal"></searchproposal>
-       <result @resultadd='resultadd' v-show="resultshow" :resultlist="resultlist"
+       <result @resultadd='resultadd' v-show="resultshow" :offset="offset" :resultlist="resultlist"
       ></result>
        
     </div>
@@ -35,7 +35,7 @@
  import searchproposal from './components/searchproposal.vue'
  import result from './components/searchresult.vue'
  import history from './components/searchhistory.vue'
- import {searchresult} from '@/api/search'
+ import {searchresult,searchsuggest} from '@/api/search'
  import {debounce} from 'lodash'
  export default {
     name: 'MySearch',
@@ -44,7 +44,7 @@
          value:'',
          propolist:[],
          limit:15,
-         offset:1,
+         offset:0,
          resultlist:[],
          proshow:false,
          resultshow:false,
@@ -55,14 +55,17 @@
        value:{
           //通过debounce对搜索函数进行截流操作
          handler: debounce(async function(){
-             const {result}=await searchresult({
-            limit:10,
-            keywords:this.value,
-          }) 
-          if(result){
-            this.propolist=result.songs
+         try{
+            const {result}=await searchsuggest({
+               keywords:this.value,
+               type:'mobile'
+            }) 
+            if(result){
+               this.propolist=result.allMatch
+            }
+           }catch{
+
           }
-           console.log(this.propolist)
           },200) 
        }
     },
@@ -91,17 +94,18 @@
       },
       async resultadd(offset){
           this.offset=offset
+          console.log(this.offset)
           const {result}=await searchresult({
             limit:this.limit,
             keywords:this.value,
             offset:this.offset,
             type:1
          })
-          this.resultlist.push(...result.songs)
+         this.resultlist.push(...result.songs)
       },
       async propoclick(value){
         this.value=value
-        this.offset=1
+        this.offset=0
         this.$bus.$emit('getvalue',value)
         const {result}=await searchresult({
             limit:this.limit,
@@ -124,7 +128,7 @@
       async onSearch(){
          this.resultshow=true
          this.proshow=false
-         this.offset=1
+         this.offset=0
          this.$bus.$emit('getvalue',this.value)
          const {result}=await searchresult({
             limit:this.limit,

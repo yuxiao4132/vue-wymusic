@@ -3,7 +3,7 @@
 
   <van-list
   v-model="loading"
-  :finished="false"
+  :finished="finished"
   finished-text="没有更多了"
   @load="onLoad"
 >
@@ -34,9 +34,8 @@
      return{
          value:'',
          loading: false,
-         offset:1,
          isActive:false,
-         value:''
+         value:'',
      }
     },
     props:{
@@ -47,14 +46,12 @@
       finished:{
         type:Boolean,
         require:true
+      },
+      offset:{
+        type:Number,
+        require:true
       }
     },
-    created(){
-     
-    },
-    computed:{
-	
- 	},
     mounted(){
       this.$bus.$on('getvalue',value=>{
         this.value=value
@@ -64,8 +61,7 @@
     methods:{
       searchpush(index){
        this.$store.state.ishome=false
-       console.log(index)
-      //  this.$store.state.currentindex=index+1
+       this.$store.state.currentindex=index
 			 this.$store.state.songlist=this.resultlist
        this.$store.state.songid=this.resultlist[index].id
 			 this.$store.state.isbofang=true
@@ -75,7 +71,8 @@
       //  this.$router.push('/song/'+this.resultlist[index].id)
       },
       onLoad() {
-        this.$emit('resultadd',++this.offset)
+        let offset = this.offset
+        this.$emit('resultadd',offset+=15)
         this.loading=false
       }
     },
