@@ -18,7 +18,7 @@
 <script>
   import TobTab from '@/components/TobTab'
   import {getmysong} from '@/api/login'
-  import SheetSong from './components/SheetSong.vue'
+  import SheetSong from './components/MySong.vue'
   export default {
     name: 'MySong',
     created(){

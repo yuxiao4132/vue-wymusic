@@ -14,16 +14,12 @@
 		<div class="sheetitem" v-for="(item,index) in songlist"
 		@click="getsong(index)">
 		  <div class="left">
-			<div v-if="item.al">
-				<span v-if="index===currentindex" class="iconfont icon-yinpin"></span>
-				<span v-else class="index">{{index |  indexadd}}</span>
-			</div>
 			<div class="songcontent">
-				<p>{{item |  getzhuanji}}</p>
+				<p>{{item.song.name}}</p>
 				<div>
-					<span>{{item |  getauth}}</span>
+					<span>{{item.song.ar[0].name}}</span>
 					<span>-</span>
-					<span>{{item |  getname}}</span>
+					<span>{{item.song.al.name}}</span>
 				</div>
 			</div>
 		  </div>
@@ -41,33 +37,6 @@
   // import {SongIndex} from ''
   export default {
     name: 'SheetSong',
-	data(){
-		return {
-			yinping:null,//是否为选中当前播放音乐的标识
-			id:null
-		}
-	},
-	filters:{
-		//过滤器,接受传进来的参数。返回需要做相应处理判断的值
-		getname:function(value){
-			return value.al ? value.al.name : value.song.al.name
-		},
-		getauth:function(value){
-			return value.al ? value.ar[0].name : value.song.ar[0].name
-		},
-		getzhuanji:function(value){
-			return value.al ? value.name : value.song.name
-		},
-		indexadd:function(value){
-			return ++value
-		}
-	},
-	computed:{
-       ...mapGetters([
-            'getissheet',
-			'currentindex'
-        ]),
-	},
 	props:{
 		songlist:{
 			type:Array,
@@ -83,25 +52,12 @@
 			//跳转时重置歌单内容和索引,并且本地储存离开时歌单的id
 			//这边-1是索引为1开始,数组索引为0开始
 			this.$store.state.currentindex=index
-			this.$store.state.currentindexs=index
 			this.$store.state.songlist=this.songlist
 			this.$store.state.ishome=false
-			// console.log(index)
-			// console.log(this.songlist[index])
-			this.$store.state.songid=this.songlist[index].song ? this.songlist[index].song.id : this.songlist[index].id
-			//console.log(this.songlist[index].song.id)
-			//console.log(this.songlist[index-1].song)
-			//console.log(this.songlist[index].song.id
+			this.$store.state.songid=this.songlist[index].song.id
 			this.$store.state.isbofang=true
-			if(this.songlist[index].song){
-               this.$store.state.issheet=false
-			}else{
-			   this.$store.state.issheet=true
-			}
-		
-			this.$store.state.sheetid=this.$route.params.id
+            this.$store.state.issheet=false
 			this.$router.push('/song')
-			
 		}
 	}
   }

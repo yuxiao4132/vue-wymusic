@@ -14,19 +14,16 @@
 		<div class="sheetitem" v-for="(item,index) in songlist"
 		@click="getsong(index)">
 		  <div class="left">
-			<div v-if="item.al">
+			<div>
 				<span v-if="index===currentindex" class="iconfont icon-yinpin"></span>
 				<span v-else class="index">{{index |  indexadd}}</span>
 			</div>
 			<div class="songcontent">
-				<p>{{item |  getzhuanji}}</p>
+				<p>{{item.name}}</p>
 				<div>
-					<span>{{item |  getauth}}</span>
+					<span>{{item.ar[0].name}}</span>
 					<span>-</span>
-					<span>{{item |  getname}}</span>
-					<!-- <span class="content">{{item.ar[0].name}}</span>
-					<span>-</span>
-					<span class="content">{{item.al.name}}</span> -->
+					<span>{{item.al.name}}</span>
 				</div>
 			</div>
 		  </div>
@@ -44,24 +41,8 @@
   // import {SongIndex} from ''
   export default {
     name: 'SheetSong',
-	data(){
-		return {
-			yinping:null,//是否为选中当前播放音乐的标识
-			id:null
-		}
-	},
 	filters:{
-		//过滤器,接受传进来的参数。返回需要做相应处理判断的值
-		getname:function(value){
-			return value.al ? value.al.name : value.song.al.name
-		},
-		getauth:function(value){
-			return value.al ? value.ar[0].name : value.song.ar[0].name
-		},
-		getzhuanji:function(value){
-			return value.al ? value.name : value.song.name
-		},
-		indexadd:function(value){
+		indexadd(value){
 			return ++value
 		}
 	},
@@ -73,7 +54,6 @@
 	},
 	mounted(){
 		if(this.getissheet && this.$route.params.id===this.$store.state.sheetid){
-			console.log('getissheet')
 			this.$store.state.currentindex=this.$store.state.currentindexs
 		}else{
 			this.$store.state.currentindex=null
@@ -97,22 +77,11 @@
 			this.$store.state.currentindexs=index
 			this.$store.state.songlist=this.songlist
 			this.$store.state.ishome=false
-			// console.log(index)
-			// console.log(this.songlist[index])
-			this.$store.state.songid=this.songlist[index].song ? this.songlist[index].song.id : this.songlist[index].id
-			//console.log(this.songlist[index].song.id)
-			//console.log(this.songlist[index-1].song)
-			//console.log(this.songlist[index].song.id
+			this.$store.state.songid=this.songlist[index].id
 			this.$store.state.isbofang=true
-			if(this.songlist[index].song){
-               this.$store.state.issheet=false
-			}else{
-			   this.$store.state.issheet=true
-			}
-		
+			this.$store.state.issheet=true
 			this.$store.state.sheetid=this.$route.params.id
 			this.$router.push('/song')
-			
 		}
 	}
   }
