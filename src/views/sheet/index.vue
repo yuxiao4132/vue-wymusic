@@ -56,7 +56,7 @@
   //歌单信息组件
   import SheetInfo from './components/SheetInfo.vue'
   //歌单歌曲组件
-  import SheetSong from '../../components/SheetSong.vue'
+  import SheetSong from './components/SheetSong.vue'
   import ScrollY from '@/components/ScrollY'	
   import {getsheet,getsong} from '@/api/sheet'
   import {itemListenerMixin} from '@/common/mixin'
@@ -92,9 +92,6 @@
 
 	methods:{
 		async sheetall(){
-			this.$bus.$on('initial',()=>{
-				
-			})
 			const data = await getsheet({id:this.id})
 			this.sheetlist=data.playlist
 			//配置sheetinfo组件需要传入的数据

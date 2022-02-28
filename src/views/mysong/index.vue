@@ -18,11 +18,14 @@
 <script>
   import TobTab from '@/components/TobTab'
   import {getmysong} from '@/api/login'
-  import SheetSong from '../../components/SheetSong.vue'
+  import SheetSong from './components/SheetSong.vue'
   export default {
     name: 'MySong',
     created(){
       this.mysong()
+    },
+    mounted(){
+      console.log(this.$store.state.issheet)
     },
     data(){
         return {

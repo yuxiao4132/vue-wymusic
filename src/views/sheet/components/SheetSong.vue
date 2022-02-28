@@ -72,21 +72,13 @@
         ]),
 	},
 	mounted(){
-		if(this.$route.name.name=='sheet'){
-			if(this.getissheet && this.$route.params.id===this.$store.state.sheetid){
-			  this.$store.state.currentindex=this.$store.state.currentindexs
-			}else{
-			  this.$store.state.currentindex=null
-			}	
-		}
+		if(this.getissheet && this.$route.params.id===this.$store.state.sheetid){
+			console.log('getissheet')
+			this.$store.state.currentindex=this.$store.state.currentindexs
+		}else{
+			this.$store.state.currentindex=null
+		}	
 	},
-	// beforeDestroy(){
-		
-	// 	if(this.$store.state.currentindex){
-    //        this.$store.state.currentindexs=currentindex
-	// 	}
-	// 	console.log(this.$store.state.currentindexs)
-	// },
 	props:{
 		songlist:{
 			type:Array,
