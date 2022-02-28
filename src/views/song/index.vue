@@ -240,9 +240,9 @@
 			this.$store.state.commenttype=0
 			//console.log(this.songinfo)
 			this.$store.state.commentinfo={
-				img:this.songinfo.imgurl,
-				title:this.songinfo.title,
-				name:this.songinfo.name
+				img:this.songinfo.songs[0].al.picUrl,
+				title:this.songinfo.songs[0].name,
+				name:this.songinfo.songs[0].ar[0].name
 			}
 			this.$router.push('/comment/'+this.getsongid)
 		}
@@ -252,11 +252,11 @@
 
 <style scoped>
 	.lyricp{
-		/* height: 30px;
-		line-height: 30px; */
+		height: 30px;
+		line-height: 30px;
 	}
 	.lyricpadding{
-		padding-bottom: 180px;
+		padding-bottom: 190px;
 	}
   .songindex{
 	  padding: 0 10px;

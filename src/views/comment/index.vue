@@ -72,6 +72,9 @@
          this.getsongping()
        }
     },
+    mounted(){
+      console.log(this.commentinfo)
+    },
     components:{
      TobTab,
      comment,
@@ -87,7 +90,7 @@
              //this.$store.state.type=2
              this.comments=data.comments
              this.louceng()
-             console.log(this.commentinfo)
+             console.log(data)
         },
         
         async songcomment(){
